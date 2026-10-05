@@ -1,0 +1,16 @@
+flask
+flask-limiter
+flask-cors
+scikit-learn
+pandas
+numpy
+joblib
+langdetect
+nltk
+feedparser
+requests
+trafilatura
+matplotlib
+seaborn
+waitress
+pytest

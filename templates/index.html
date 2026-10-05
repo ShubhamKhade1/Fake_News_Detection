@@ -1,0 +1,1030 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Veritas – Multilingual News Verification (EN · HI · MR)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Mukta:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --card-muted: #f1f5f9;
+      --ink: #0f172a;
+      --mute: #64748b;
+      --line: #e2e8f0;
+      --accent: #4f46e5;
+      --accent-hover: #4338ca;
+      --accent-soft: #eef2ff;
+      --real: #059669;
+      --real-soft: #ecfdf5;
+      --fake: #dc2626;
+      --fake-soft: #fef2f2;
+      --warn: #d97706;
+      --warn-soft: #fffbeb;
+      --hl-fake: #fee2e2;
+      --hl-real: #dcfce7;
+      --radius: 10px;
+      --radius-sm: 6px;
+    }
+
+    [data-theme="dark"] {
+      --bg: #0b0f17;
+      --card: #131b26;
+      --card-muted: #1c2635;
+      --ink: #f1f5f9;
+      --mute: #94a3b8;
+      --line: #243042;
+      --accent: #6366f1;
+      --accent-hover: #818cf8;
+      --accent-soft: #1e1b4b;
+      --real: #10b981;
+      --real-soft: #064e3b;
+      --fake: #ef4444;
+      --fake-soft: #451a1a;
+      --warn: #f59e0b;
+      --warn-soft: #452b0d;
+      --hl-fake: #4c1d1d;
+      --hl-real: #064e3b;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'Mukta', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      transition: background .2s ease, color .2s ease;
+    }
+
+    /* Layout Header */
+    header {
+      border-bottom: 1px solid var(--line);
+      background: var(--card);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+    .header-inner {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--ink);
+      letter-spacing: -0.02em;
+    }
+    .brand-icon {
+      width: 28px;
+      height: 28px;
+      background: var(--accent);
+      color: #fff;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+    }
+    .theme-toggle {
+      background: var(--card-muted);
+      border: 1px solid var(--line);
+      color: var(--ink);
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Main Container Grid (45 / 55 Split) */
+    .container {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    .app-grid {
+      display: grid;
+      grid-template-columns: 46fr 54fr;
+      gap: 32px;
+      align-items: start;
+    }
+    @media (max-width: 980px) {
+      .app-grid { grid-template-columns: 1fr; gap: 24px; }
+      .results-panel { position: static !important; max-height: none !important; }
+    }
+
+    /* Left Panel: Input Area */
+    .hero-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 1.7rem;
+      font-weight: 800;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      margin-bottom: 4px;
+    }
+    .hero-sub {
+      color: var(--mute);
+      font-size: 0.95rem;
+      margin-bottom: 16px;
+    }
+
+    /* Script indicator pill bar */
+    .script-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .script-badge {
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 2px 10px;
+      border-radius: 99px;
+      background: var(--card);
+      border: 1px solid var(--line);
+      color: var(--mute);
+      transition: all .2s ease;
+    }
+    .script-badge.active {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+      color: var(--accent);
+      font-weight: 700;
+      box-shadow: 0 0 0 1px var(--accent);
+    }
+
+    /* Sample chips */
+    .samples {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    .sample-label { font-size: 0.8rem; font-weight: 600; color: var(--mute); }
+    .sample-btn {
+      font-family: inherit;
+      font-size: 0.8rem;
+      padding: 3px 10px;
+      border-radius: 99px;
+      border: 1px dashed var(--line);
+      background: var(--card);
+      color: var(--ink);
+      cursor: pointer;
+      transition: all .15s ease;
+    }
+    .sample-btn:hover {
+      background: var(--card-muted);
+      border-color: var(--mute);
+    }
+
+    /* Input Box Card */
+    .input-card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+      overflow: hidden;
+    }
+    .tabs-header {
+      display: flex;
+      border-bottom: 1px solid var(--line);
+      background: var(--card-muted);
+    }
+    .tab-btn {
+      padding: 10px 18px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 600;
+      background: transparent;
+      border: 0;
+      border-bottom: 2px solid transparent;
+      color: var(--mute);
+      cursor: pointer;
+    }
+    .tab-btn.active {
+      color: var(--accent);
+      background: var(--card);
+      border-bottom-color: var(--accent);
+    }
+
+    .url-pane {
+      padding: 14px 16px;
+      display: flex;
+      gap: 10px;
+      border-bottom: 1px solid var(--line);
+      background: var(--accent-soft);
+    }
+    .url-input {
+      flex: 1;
+      height: 40px;
+      padding: 0 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--line);
+      background: var(--card);
+      color: var(--ink);
+      font-family: inherit;
+      font-size: 0.95rem;
+    }
+    .url-input::placeholder { color: var(--mute); opacity: 0.85; }
+    .btn-secondary {
+      height: 40px;
+      padding: 0 16px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--line);
+      background: var(--card);
+      color: var(--ink);
+      font-family: inherit;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .btn-secondary:hover { background: var(--card-muted); }
+
+    .textarea-wrapper { padding: 16px; }
+    textarea {
+      width: 100%;
+      min-height: 240px;
+      border: 0;
+      background: transparent;
+      color: var(--ink);
+      font-family: inherit;
+      font-size: 1.05rem;
+      line-height: 1.7;
+      resize: vertical;
+      outline: none;
+    }
+    textarea::placeholder { color: var(--mute); opacity: 0.85; }
+
+    /* Actions Bottom Bar */
+    .input-actions {
+      padding: 12px 16px;
+      background: var(--card-muted);
+      border-top: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .actions-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .lang-select {
+      height: 38px;
+      padding: 0 12px;
+      border-radius: 99px;
+      border: 1px solid var(--line);
+      background: var(--card);
+      color: var(--ink);
+      font-family: inherit;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      outline: none;
+    }
+    .guide-tag {
+      font-size: 0.82rem;
+      color: var(--mute);
+    }
+    .primary-btn {
+      height: 42px;
+      padding: 0 24px;
+      border-radius: var(--radius-sm);
+      border: 0;
+      background: var(--accent);
+      color: #ffffff;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 2px 6px rgba(79, 70, 229, 0.25);
+      transition: all .15s ease;
+    }
+    .primary-btn:hover { background: var(--accent-hover); transform: translateY(-1px); }
+    .primary-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+    /* Focus outlines */
+    textarea:focus-visible, input:focus-visible, select:focus-visible, button:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    /* Right Panel: Sticky Results Panel */
+    .results-panel {
+      position: sticky;
+      top: 80px;
+      max-height: calc(100vh - 100px);
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+    .empty-state {
+      background: var(--card);
+      border: 1px dashed var(--line);
+      border-radius: var(--radius);
+      padding: 48px 24px;
+      text-align: center;
+      color: var(--mute);
+    }
+    .empty-icon { font-size: 2.2rem; margin-bottom: 12px; display: block; opacity: 0.7; }
+    .empty-title { font-weight: 700; color: var(--ink); margin-bottom: 4px; font-size: 1.1rem; }
+    .empty-sub { font-size: 0.9rem; max-width: 320px; margin: 0 auto; }
+
+    /* Stepped Loading Pipeline Card */
+    .loading-card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 28px 24px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+    }
+    .loading-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 700;
+      font-size: 1.1rem;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .pipeline-step {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      font-size: 0.95rem;
+      color: var(--mute);
+      border-bottom: 1px solid var(--line);
+    }
+    .pipeline-step:last-child { border-bottom: 0; }
+    .pipeline-step.active {
+      color: var(--accent);
+      font-weight: 600;
+    }
+    .pipeline-step.done {
+      color: var(--real);
+    }
+    .step-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--card-muted);
+      border: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+    }
+    .pipeline-step.active .step-icon {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .pipeline-step.done .step-icon {
+      background: var(--real-soft);
+      border-color: var(--real);
+      color: var(--real);
+    }
+
+    /* Result Cards */
+    .result-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .verdict-card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    }
+    .verdict-badge {
+      display: inline-block;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 1.45rem;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+    }
+    .verdict-badge.Real { color: var(--real); }
+    .verdict-badge.Fake { color: var(--fake); }
+    .verdict-badge.Unc  { color: var(--warn); }
+
+    .confidence-meter { margin: 14px 0 8px; }
+    .meter-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--mute);
+      margin-bottom: 6px;
+    }
+    .progress-track {
+      height: 10px;
+      background: var(--card-muted);
+      border-radius: 99px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+    }
+    .progress-fill {
+      height: 100%;
+      background: var(--real);
+      border-radius: 99px;
+      transition: width .5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .progress-fill.Fake { background: var(--fake); }
+    .progress-fill.Unc { background: var(--warn); }
+
+    /* Results Disclaimer Banner (placed contextually inside results) */
+    .advisory-box {
+      margin-top: 14px;
+      padding: 10px 14px;
+      background: rgba(217, 119, 6, 0.08);
+      border-left: 3px solid var(--warn);
+      border-radius: var(--radius-sm);
+      font-size: 0.82rem;
+      line-height: 1.5;
+      color: var(--ink);
+    }
+
+    /* Layer Blocks */
+    .layer-card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+    .layer-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--line);
+    }
+    .layer-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .layer-tag {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 2px 8px;
+      border-radius: var(--radius-sm);
+      background: var(--card-muted);
+      color: var(--mute);
+    }
+
+    /* Annotated Reading Box with Inline Highlights */
+    .annotated-box {
+      background: var(--card-muted);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      font-size: 0.95rem;
+      line-height: 1.8;
+      max-height: 200px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      margin-bottom: 10px;
+    }
+    mark.hl-fake {
+      background: var(--hl-fake);
+      color: inherit;
+      padding: 2px 4px;
+      border-radius: 3px;
+      text-decoration: underline wavy var(--fake);
+      cursor: help;
+    }
+    mark.hl-real {
+      background: var(--hl-real);
+      color: inherit;
+      padding: 2px 4px;
+      border-radius: 3px;
+      cursor: help;
+    }
+    .hl-legend {
+      display: flex;
+      gap: 14px;
+      font-size: 0.78rem;
+      color: var(--mute);
+      margin-bottom: 12px;
+    }
+
+    /* Compact Evidence Rows */
+    .evidence-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .evidence-item {
+      padding: 10px 12px;
+      background: var(--card-muted);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .evidence-title {
+      font-weight: 600;
+      font-size: 0.92rem;
+      color: var(--ink);
+      text-decoration: none;
+      line-height: 1.4;
+    }
+    .evidence-title:hover { color: var(--accent); text-decoration: underline; }
+    .evidence-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.78rem;
+      color: var(--mute);
+      flex-wrap: wrap;
+    }
+    .badge {
+      display: inline-block;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      border: 1px solid transparent;
+    }
+    .badge-fc { background: #e0f2fe; color: #0369a1; border-color: #bae6fd; }
+    .badge-tr { background: var(--real-soft); color: var(--real); border-color: rgba(5,150,105,0.3); }
+    .badge-match { background: var(--card); border-color: var(--line); color: var(--mute); }
+    .badge-match.high { background: var(--real-soft); color: var(--real); border-color: rgba(5,150,105,0.3); }
+
+    /* User Feedback Card */
+    .feedback-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 12px 18px;
+      font-size: 0.88rem;
+    }
+    .fb-btns { display: flex; gap: 8px; }
+    .fb-btn {
+      padding: 6px 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--line);
+      background: var(--card-muted);
+      color: var(--ink);
+      font-family: inherit;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .fb-btn:hover { background: var(--line); }
+    .fb-success { color: var(--real); font-weight: 700; font-size: 0.88rem; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="brand">
+      <div class="brand-icon">✓</div>
+      <span>Veritas</span>
+    </div>
+    <button class="theme-toggle" id="theme-btn" type="button" aria-label="Toggle Dark/Light Mode">
+      <span id="theme-icon">🌙</span> <span id="theme-text">Dark mode</span>
+    </button>
+  </div>
+</header>
+
+<div class="container">
+  <div class="app-grid">
+    
+    <!-- LEFT COLUMN: Input Area -->
+    <div class="input-panel">
+      <h1 class="hero-title">Is this news authentic?</h1>
+      <p class="hero-sub">Enter text or paste a news URL. Evaluates text with subword character models and live sources.</p>
+
+      <!-- Live Script Indicator (English · हिन्दी · मराठी) -->
+      <div class="script-bar">
+        <span class="sample-label">Active Script:</span>
+        <span class="script-badge active" id="chip-en">English</span>
+        <span class="script-badge" id="chip-hi">हिन्दी</span>
+        <span class="script-badge" id="chip-mr">मराठी</span>
+      </div>
+
+      <!-- Sample Clickable Claims -->
+      <div class="samples">
+        <span class="sample-label">Try sample:</span>
+        <button type="button" class="sample-btn" onclick="loadSample('en')">🇬🇧 English: RBI Repo Rate</button>
+        <button type="button" class="sample-btn" onclick="loadSample('hi')">🇮🇳 हिन्दी: बजट नीति घोषणा</button>
+        <button type="button" class="sample-btn" onclick="loadSample('mr')">🇮🇳 मराठी: ग्रामीण शाळा योजना</button>
+      </div>
+
+      <!-- Main Input Card -->
+      <div class="input-card">
+        <!-- Tabs Header -->
+        <div class="tabs-header">
+          <button type="button" class="tab-btn active" id="tab-text" onclick="switchTab('text')">📝 Paste text</button>
+          <button type="button" class="tab-btn" id="tab-url" onclick="switchTab('url')">🔗 From URL</button>
+        </div>
+
+        <!-- URL Input Pane (Hidden unless URL tab is selected) -->
+        <div class="url-pane" id="url-pane" style="display: none;">
+          <input type="url" id="url-input" class="url-input" placeholder="Paste article URL (e.g. https://indianexpress.com/article/...)">
+          <button type="button" id="extract-btn" class="btn-secondary">Extract Article</button>
+        </div>
+
+        <!-- Textarea -->
+        <div class="textarea-wrapper">
+          <textarea id="news-text" placeholder="Type or paste headline or full article text here (min 15 characters)..."></textarea>
+        </div>
+
+        <!-- Bottom Action Bar -->
+        <div class="input-actions">
+          <div class="actions-left">
+            <select id="lang-override" class="lang-select" title="Language selection">
+              <option value="auto">🌐 Auto-detect language</option>
+              <option value="en">English</option>
+              <option value="hi">हिन्दी (Hindi)</option>
+              <option value="mr">मराठी (Marathi)</option>
+            </select>
+            <span class="guide-tag">⚖️ A guide, not a verdict</span>
+          </div>
+          <button type="button" id="check-btn" class="primary-btn">
+            <span>Check this news</span> ➔
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN: Sticky Results Panel -->
+    <div class="results-panel" id="results-panel">
+      <!-- Default Empty State -->
+      <div class="empty-state" id="empty-state">
+        <span class="empty-icon">📰</span>
+        <h3 class="empty-title">Ready for analysis</h3>
+        <p class="empty-sub">Paste an article or click a sample on the left to see the model confidence and live source checks.</p>
+      </div>
+
+      <!-- Dynamic Output (Populated by JS) -->
+      <div id="results-output" style="display: none;"></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+const SAMPLES = {
+  en: "The Reserve Bank of India announced that it will keep the benchmark repo rate unchanged at 6.5 percent following the Monetary Policy Committee review meeting, noting sustained domestic economic growth.",
+  hi: "भारतीय रिजर्व बैंक ने मौद्रिक नीति समिति की समीक्षा बैठक के बाद नीतिगत रेपो दर में कोई बदलाव नहीं करने का फैसला किया है और देश की आर्थिक वृद्धि को स्थिर बताया है।",
+  mr: "राज्य शासनाने ग्रामीण भागातील शाळांच्या विकासासाठी आणि पायाभूत सुविधांच्या आधुनिकीकरणासाठी नवीन योजना जाहीर केली असून निधीची तरतूद करण्यात आली आहे."
+};
+
+// Theme Management
+const initTheme = () => {
+  const saved = localStorage.getItem("veritas_theme") || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+  setTheme(saved);
+};
+const setTheme = (mode) => {
+  document.documentElement.setAttribute("data-theme", mode);
+  localStorage.setItem("veritas_theme", mode);
+  $("#theme-icon").textContent = mode === "dark" ? "☀️" : "🌙";
+  $("#theme-text").textContent = mode === "dark" ? "Light mode" : "Dark mode";
+};
+$("#theme-btn").onclick = () => {
+  const current = document.documentElement.getAttribute("data-theme") || "light";
+  setTheme(current === "dark" ? "light" : "dark");
+};
+initTheme();
+
+// Script Indicator Update
+const updateScriptIndicator = (text) => {
+  const devanagari = /[\u0900-\u097F]/.test(text);
+  const chipEn = $("#chip-en"), chipHi = $("#chip-hi"), chipMr = $("#chip-mr");
+  chipEn.classList.remove("active"); chipHi.classList.remove("active"); chipMr.classList.remove("active");
+
+  if (!text.trim()) { chipEn.classList.add("active"); return; }
+  if (devanagari) {
+    if (text.includes("ळ") || /आहे|झाले|केले|म्हणून|याच्या|त्यांच्या/.test(text)) {
+      chipMr.classList.add("active");
+    } else {
+      chipHi.classList.add("active");
+    }
+  } else {
+    chipEn.classList.add("active");
+  }
+};
+$("#news-text").addEventListener("input", (e) => updateScriptIndicator(e.target.value));
+
+// Sample Loader
+window.loadSample = (lang) => {
+  switchTab("text");
+  $("#news-text").value = SAMPLES[lang];
+  $("#lang-override").value = lang;
+  updateScriptIndicator(SAMPLES[lang]);
+};
+
+// Tabs Switching
+window.switchTab = (tab) => {
+  if (tab === "text") {
+    $("#tab-text").classList.add("active");
+    $("#tab-url").classList.remove("active");
+    $("#url-pane").style.display = "none";
+  } else {
+    $("#tab-url").classList.add("active");
+    $("#tab-text").classList.remove("active");
+    $("#url-pane").style.display = "flex";
+    $("#url-input").focus();
+  }
+};
+
+// URL Extraction Handler
+$("#extract-btn").onclick = async () => {
+  const url = $("#url-input").value.trim();
+  if (!url) { alert("Please enter a valid news article URL."); return; }
+  const btn = $("#extract-btn");
+  btn.disabled = true; btn.textContent = "Extracting…";
+
+  try {
+    const res = await fetch("/extract_url", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ url })
+    });
+    const data = await res.json();
+    if (!res.ok) { alert(data.error || "Failed to extract article content."); return; }
+    
+    switchTab("text");
+    $("#news-text").value = (data.title ? data.title + "\n\n" : "") + data.text;
+    updateScriptIndicator($("#news-text").value);
+  } catch (e) {
+    alert("Network request failed. Is the server running?");
+  } finally {
+    btn.disabled = false; btn.textContent = "Extract Article";
+  }
+};
+
+// Stepped Pipeline Loading Render
+const renderLoadingState = () => {
+  $("#empty-state").style.display = "none";
+  const out = $("#results-output");
+  out.style.display = "block";
+  out.innerHTML = `
+    <div class="loading-card">
+      <div class="loading-title">
+        <span class="spinner">⏳</span> Analyzing submission…
+      </div>
+      <div class="pipeline-step active" id="step-1">
+        <span class="step-icon">1</span>
+        <span>Detecting script & subword morphology</span>
+      </div>
+      <div class="pipeline-step" id="step-2">
+        <span class="step-icon">2</span>
+        <span>Running Calibrated Logistic Regression model</span>
+      </div>
+      <div class="pipeline-step" id="step-3">
+        <span class="step-icon">3</span>
+        <span>Cross-referencing live sources & fact-checkers</span>
+      </div>
+    </div>
+  `;
+
+  setTimeout(() => {
+    const s1 = $("#step-1"), s2 = $("#step-2");
+    if(s1 && s2) { s1.className = "pipeline-step done"; s1.querySelector(".step-icon").textContent = "✓"; s2.className = "pipeline-step active"; }
+  }, 400);
+
+  setTimeout(() => {
+    const s2 = $("#step-2"), s3 = $("#step-3");
+    if(s2 && s3) { s2.className = "pipeline-step done"; s2.querySelector(".step-icon").textContent = "✓"; s3.className = "pipeline-step active"; }
+  }, 1100);
+};
+
+let currentAnalysisData = null;
+
+// Submission & Verification Runner
+$("#check-btn").onclick = async () => {
+  const text = $("#news-text").value.trim();
+  const override = $("#lang-override").value;
+  if (text.length < 15) {
+    alert("Please provide at least 15 characters of news text.");
+    return;
+  }
+
+  const btn = $("#check-btn");
+  btn.disabled = true;
+  renderLoadingState();
+
+  try {
+    const res = await fetch("/analyze", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        text: text,
+        language_override: override === "auto" ? "" : override
+      })
+    });
+    const d = await res.json();
+    if (!res.ok) {
+      $("#results-output").innerHTML = `<div class="verdict-card" style="border-color:var(--fake)"><p style="color:var(--fake);font-weight:700">${esc(d.error || "Analysis failed.")}</p></div>`;
+      return;
+    }
+
+    currentAnalysisData = { text, ...d };
+    renderResults(d);
+  } catch (e) {
+    $("#results-output").innerHTML = `<div class="verdict-card" style="border-color:var(--fake)"><p style="color:var(--fake);font-weight:700">Server communication failed. Please verify that the backend is running.</p></div>`;
+  } finally {
+    btn.disabled = false;
+  }
+};
+
+// Render Clear 2-Layer Results
+const renderResults = (d) => {
+  const ev = d.evidence;
+  const cls = d.final.includes("Real") ? "Real" : (d.final.includes("Fake") ? "Fake" : "Unc");
+  const probPct = Math.round(d.ml_real_prob * 100);
+  const confPct = Math.round(Math.abs(d.ml_real_prob - 0.5) * 200);
+
+  const langNames = { en: "English", hi: "हिन्दी (Hindi)", mr: "मराठी (Marathi)" };
+  const detectedLang = langNames[d.language] || d.language.toUpperCase();
+
+  // Articles formatting
+  const articlesHtml = (ev.articles || []).map(a => {
+    const relPct = Math.round((a.relevance || 0) * 100);
+    const relClass = relPct >= 30 ? "badge badge-match high" : "badge badge-match";
+    const srcTag = a.is_fact_checker
+      ? `<span class="badge badge-fc">Fact-Checker</span>`
+      : (a.trusted ? `<span class="badge badge-tr">Trusted Outlet</span>` : ``);
+    const dateStr = a.published ? `· <span>${esc(a.published.slice(0, 16))}</span>` : "";
+
+    return `
+      <li class="evidence-item">
+        <a href="${esc(a.link)}" target="_blank" rel="noopener" class="evidence-title">${esc(a.title)}</a>
+        <div class="evidence-meta">
+          <strong>${esc(a.source || "Web")}</strong>
+          ${srcTag}
+          <span class="${relClass}">Relevance: ${relPct}%</span>
+          ${dateStr}
+        </div>
+      </li>
+    `;
+  }).join("") || `<li class="evidence-item" style="color:var(--mute)">No matching reporting found from indexed sources.</li>`;
+
+  // Fact check ratings
+  const factChecksHtml = (ev.fact_checks || []).map(fc => `
+    <li class="evidence-item" style="border-left: 3px solid var(--accent);">
+      <a href="${esc(fc.url)}" target="_blank" rel="noopener" class="evidence-title">
+        <strong>${esc(fc.publisher)}:</strong> ${esc(fc.claim)}
+      </a>
+      <div class="evidence-meta">
+        <span class="badge badge-fc">Rating: ${esc(fc.rating)}</span>
+      </div>
+    </li>
+  `).join("");
+
+  const qTags = (ev.query_variants || []).map(q => `<code style="background:var(--card-muted);padding:2px 6px;border-radius:4px;font-size:0.8rem">${esc(q)}</code>`).join(" · ");
+
+  $("#results-output").innerHTML = `
+    <div class="result-container">
+      
+      <!-- Top Likelihood Summary Card -->
+      <div class="verdict-card">
+        <div style="font-size:0.82rem;font-weight:700;color:var(--mute);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:4px">Overall Assessment</div>
+        <div class="verdict-badge ${cls}">${esc(d.final)}</div>
+        
+        <div class="confidence-meter">
+          <div class="meter-label">
+            <span>Factual Pattern Likelihood</span>
+            <span>${probPct}% (Confidence: ${confPct}%)</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill ${cls}" style="width: ${probPct}%"></div>
+          </div>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;font-size:0.85rem;color:var(--mute);margin-top:8px">
+          <span>Language: <strong>${detectedLang}</strong></span>
+          <span>Model: <strong>${esc(d.ml_label)}</strong></span>
+        </div>
+
+        <!-- Prominent Contextual Disclaimer -->
+        <div class="advisory-box">
+          <strong>⚖️ AI Advisory Aid:</strong> This assessment is an automated analytical aid based on linguistic models and public reporting, not a definitive judgment of truth. Always verify critical news with official primary sources.
+        </div>
+      </div>
+
+      <!-- Layer 1: What the Model Thinks -->
+      <div class="layer-card">
+        <div class="layer-header">
+          <div class="layer-title">
+            <span>🧠 What the model thinks</span>
+          </div>
+          <span class="layer-tag">Layer 1 · ML Classifier</span>
+        </div>
+
+        <div class="hl-legend">
+          <span><mark class="hl-fake">Highlighted red</mark>: Pushes toward Fake</span>
+          <span><mark class="hl-real">Highlighted green</mark>: Pushes toward Real</span>
+        </div>
+
+        <!-- Inline Word Highlighting Inside User Text -->
+        <div class="annotated-box">${d.highlighted_html}</div>
+        
+        <div style="font-size:0.82rem;color:var(--mute);margin-top:6px">
+          Calibrated Logistic Regression: <strong>${(d.ml_real_prob * 100).toFixed(0)}% factual</strong> · Naive Bayes: <strong>${(d.nb_real_prob * 100).toFixed(0)}% factual</strong>
+        </div>
+      </div>
+
+      <!-- Layer 2: What Live Sources Say -->
+      <div class="layer-card">
+        <div class="layer-header">
+          <div class="layer-title">
+            <span>🌐 What live sources say</span>
+          </div>
+          <span class="layer-tag">Layer 2 · Live Verification</span>
+        </div>
+
+        <div style="font-weight:700;font-size:0.95rem;margin-bottom:10px;color:var(--ink)">
+          Status: ${esc(ev.verdict)}
+        </div>
+
+        ${qTags ? `<div style="font-size:0.8rem;color:var(--mute);margin-bottom:12px">Search queries tested: ${qTags}</div>` : ""}
+
+        ${factChecksHtml ? `<div style="font-size:0.85rem;font-weight:700;margin-bottom:6px">Fact-Check Database Matches:</div><ul class="evidence-list" style="margin-bottom:12px">${factChecksHtml}</ul>` : ""}
+
+        <div style="font-size:0.85rem;font-weight:700;margin-bottom:6px">Independent Coverage & Relevance:</div>
+        <ul class="evidence-list">${articlesHtml}</ul>
+      </div>
+
+      <!-- Layer 3: User Feedback -->
+      <div class="feedback-row" id="feedback-card">
+        <span>Was this assessment accurate?</span>
+        <div class="fb-btns" id="fb-action-area">
+          <button type="button" class="fb-btn" onclick="sendFeedback('correct')">👍 Yes</button>
+          <button type="button" class="fb-btn" onclick="sendFeedback('incorrect')">👎 No, inaccurate</button>
+        </div>
+      </div>
+
+    </div>
+  `;
+};
+
+// Feedback Submission
+window.sendFeedback = async (choice) => {
+  if (!currentAnalysisData) return;
+  const area = $("#fb-action-area");
+  area.innerHTML = `<span style="color:var(--mute)">Logging feedback…</span>`;
+
+  try {
+    const res = await fetch("/feedback", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        text: currentAnalysisData.text,
+        language: currentAnalysisData.language,
+        predicted_label: currentAnalysisData.final,
+        predicted_prob: currentAnalysisData.ml_real_prob,
+        feedback: choice
+      })
+    });
+    const d = await res.json();
+    if (res.ok) {
+      area.innerHTML = `<span class="fb-success">✓ Feedback recorded. Thank you!</span>`;
+    } else {
+      area.innerHTML = `<span style="color:var(--fake)">Failed to save feedback.</span>`;
+    }
+  } catch (e) {
+    area.innerHTML = `<span style="color:var(--fake)">Network error saving feedback.</span>`;
+  }
+};
+</script>
+</body>
+</html>
